@@ -9,7 +9,7 @@
 
 ##  Phân công thành viên
 
-| Thành viên | Vai trò | Màu |
+| Thành viên | Vai trò 
 |---|---|---|
 | ** 1** | RL Agent & Training 
 | ** 2** | Environment & Game Logic 

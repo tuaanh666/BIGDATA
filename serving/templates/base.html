@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MovieRec — Xem phim & gợi ý cho bạn{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
+</head>
+<body>
+<header class="navbar">
+    <div class="nav-inner">
+        <a href="{{ url_for('index') }}" class="logo">🎬 Movie<span>Rec</span></a>
+        <nav class="nav-links">
+            <a href="{{ url_for('index') }}">Trang chủ</a>
+            <a href="{{ url_for('recommend') }}">Gợi ý cho tôi</a>
+            <a href="{{ url_for('search') }}">Tìm phim</a>
+        </nav>
+        <form class="nav-search" action="{{ url_for('recommend') }}" method="get">
+            <input type="number" name="user_id" placeholder="Nhập User ID..." min="1">
+            <button type="submit">Xem gợi ý</button>
+        </form>
+    </div>
+</header>
+
+<main class="container">
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <span class="logo">🎬 Movie<span>Rec</span></span>
+        <nav class="footer-links">
+            <a href="{{ url_for('index') }}">Trang chủ</a>
+            <a href="{{ url_for('recommend') }}">Gợi ý cho bạn</a>
+            <a href="{{ url_for('search') }}">Tìm phim</a>
+        </nav>
+        <p>© 2026 MovieRec. Gợi ý phim theo sở thích của bạn.</p>
+    </div>
+</footer>
+</body>
+</html>

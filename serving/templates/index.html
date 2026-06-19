@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% from "_card.html" import movie_card %}
+{% block content %}
+
+<section class="hero">
+    <h1>Khám phá bộ phim tiếp theo của bạn</h1>
+    <p>Hàng chục nghìn bộ phim, được chọn riêng theo gu của bạn. Chọn hồ sơ để bắt đầu.</p>
+    <form class="hero-search" action="{{ url_for('recommend') }}" method="get">
+        <input type="number" name="user_id" placeholder="Nhập hồ sơ của bạn (vd: 1, 42, 100)" min="1" required>
+        <button type="submit">🍿 Xem ngay</button>
+    </form>
+</section>
+
+{% if stats %}
+<section class="stats-bar">
+    <div class="stat"><span class="num">{{ '{:,}'.format(stats.get('num_movies','0')|int) }}+</span><span class="lbl">Phim</span></div>
+    <div class="stat"><span class="num">{{ '{:,}'.format(stats.get('num_users','0')|int) }}+</span><span class="lbl">Thành viên</span></div>
+    <div class="stat"><span class="num">{{ '{:,}'.format(stats.get('num_ratings','0')|int) }}+</span><span class="lbl">Lượt đánh giá</span></div>
+    <div class="stat"><span class="num">24/7</span><span class="lbl">Xem mọi lúc</span></div>
+</section>
+{% endif %}
+
+{% if trending %}
+<section>
+    <h2 class="section-title">⚡ Thịnh hành real-time <span class="live-dot">LIVE</span></h2>
+    <p class="section-sub">Phim đang được quan tâm <strong>ngay lúc này</strong> — cập nhật trực tiếp từ luồng Wikipedia (Wikimedia EventStreams).</p>
+    <div class="grid">
+        {% for m in trending %}
+            {{ movie_card(m.title, none, none, rank=loop.index, poster=m.poster_url) }}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section>
+    <h2 class="section-title">🔥 Thịnh hành</h2>
+    <p class="section-sub">Những bộ phim được yêu thích nhất hiện nay.</p>
+    <div class="grid">
+        {% for m in popular %}
+            {{ movie_card(m.title, none, m.avg_rating, rank=m.rank_pos, poster=m.poster_url) }}
+        {% else %}
+            <p class="empty">Chưa có phim để hiển thị.</p>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

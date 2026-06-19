@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "_card.html" import movie_card %}
+{% block content %}
+
+{% if not user_id %}
+<section class="hero">
+    <h1>Phim dành riêng cho bạn</h1>
+    <p>Chọn hồ sơ của bạn để xem những bộ phim được gợi ý theo sở thích.</p>
+    <form class="hero-search" action="{{ url_for('recommend') }}" method="get">
+        <input type="number" name="user_id" placeholder="Nhập hồ sơ (vd: 1, 42, 100)" min="1" required>
+        <button type="submit">🍿 Xem ngay</button>
+    </form>
+</section>
+{% else %}
+
+<div class="user-header">
+    <h1>Xin chào 👋 Hồ sơ #{{ user_id }}</h1>
+</div>
+
+{% if history %}
+<section>
+    <h2 class="section-title">❤️ Phim bạn đã thích</h2>
+    <div class="grid">
+        {% for h in history %}{{ movie_card(h.title, h.genres, h.rating, poster=h.poster_url) }}{% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if cold_start %}
+<section>
+    <h2 class="section-title">🔥 Thịnh hành</h2>
+    <p class="section-sub">Bắt đầu đánh giá vài bộ phim để nhận gợi ý riêng cho bạn.</p>
+    <div class="grid">
+        {% for m in popular %}{{ movie_card(m.title, none, m.avg_rating, rank=m.rank_pos, poster=m.poster_url) }}{% endfor %}
+    </div>
+</section>
+{% else %}
+
+<section>
+    <h2 class="section-title">✨ Đề xuất cho bạn</h2>
+    <p class="section-sub">Dựa trên những bộ phim bạn từng yêu thích.</p>
+    <div class="grid">
+        {% for r in batch_recs %}
+            {{ movie_card(r.title, r.genres, r.avg_rating, score=r.score, rank=r.rank_pos, poster=r.poster_url) }}
+        {% endfor %}
+    </div>
+</section>
+
+{% if realtime_recs %}
+<section>
+    <h2 class="section-title">🎬 Có thể bạn cũng thích</h2>
+    <p class="section-sub">Gợi ý cập nhật theo thể loại bạn vừa quan tâm.</p>
+    <div class="grid">
+        {% for r in realtime_recs %}{{ movie_card(r.title, none, none, score=r.score, poster=r.poster_url) }}{% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% endif %}
+{% endif %}
+
+{% endblock %}

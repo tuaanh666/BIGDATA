@@ -1,0 +1,25 @@
+{% macro movie_card(title, genres, rating, score=None, rank=None, poster=None) %}
+<div class="card">
+    {% if rank %}<div class="rank-badge">#{{ rank }}</div>{% endif %}
+    <div class="card-poster">
+        {% if poster %}
+        <img class="poster-img" src="{{ poster }}" alt="{{ title }}" loading="lazy"
+             onerror="this.outerHTML='<span class=poster-emoji>🎞️</span>'">
+        {% else %}
+        <span class="poster-emoji">🎞️</span>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <h3 class="card-title">{{ title or 'Không rõ tên' }}</h3>
+        <div class="genres">
+            {% for g in (genres or '').split('|') if g and g != '(no genres listed)' %}
+                <span class="genre-tag">{{ g }}</span>
+            {% endfor %}
+        </div>
+        <div class="card-meta">
+            {% if rating %}<span class="star">⭐ {{ '%.1f'|format(rating) }}</span>{% endif %}
+            {% if score is not none %}<span class="match">✓ Gợi ý cho bạn</span>{% endif %}
+        </div>
+    </div>
+</div>
+{% endmacro %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "_card.html" import movie_card %}
+{% block content %}
+
+<section class="hero compact">
+    <h1>🔍 Tìm phim</h1>
+    <form class="hero-search" action="{{ url_for('search') }}" method="get">
+        <input type="text" name="q" value="{{ q }}" placeholder="Tên phim (vd: Matrix, Toy Story)..." required>
+        <button type="submit">Tìm</button>
+    </form>
+</section>
+
+{% if q %}
+<h2 class="section-title">Kết quả cho "{{ q }}" ({{ results|length }})</h2>
+<div class="grid">
+    {% for m in results %}
+        {{ movie_card(m.title, m.genres, m.avg_rating, poster=m.poster_url) }}
+    {% else %}
+        <p class="empty">Không tìm thấy phim nào.</p>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

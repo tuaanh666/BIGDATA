@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
-# ============================================================
-#  Đưa dữ liệu MovieLens 25M từ máy host lên HDFS (Data Lake).
-#  Chạy SAU khi cluster đã `docker compose up`.
-# ============================================================
 set -e
-
-# Trên Git Bash (Windows), tắt path-conversion của MSYS để '/data/...' không bị
-# biến thành đường dẫn Windows (gây lỗi "No FileSystem for scheme D").
 export MSYS_NO_PATHCONV=1
 export MSYS2_ARG_CONV_EXCL='*'
 

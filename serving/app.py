@@ -1,16 +1,3 @@
-"""
-app.py — SERVING LAYER (Flask)
-==============================
-Web demo cho hệ thống gợi ý phim. Hiển thị:
-  - Gợi ý batch (ALS) cho 1 user  — đọc từ MySQL/SQLite (Batch View)
-  - Gợi ý real-time (theo thể loại vừa thích) — đọc từ HBase (Real-time View)
-  - Phim phổ biến (cold-start cho user mới)
-  - Dashboard thống kê tổng quan
-
-Nguồn dữ liệu cấu hình qua DB_URL:
-  - Docker:  mysql+pymysql://mluser:mlpassword@mysql:3306/movielens
-  - Local :  sqlite:///./recsys.db  (mặc định)
-"""
 import os
 import json
 
@@ -26,8 +13,6 @@ HBASE_TRENDING_ROW = os.environ.get("HBASE_TRENDING_ROW", "__TRENDING__")
 app = Flask(__name__)
 engine = create_engine(DB_URL, pool_pre_ping=True)
 
-
-# --------------------------- Data access ------------------------------------
 def query(sql, **params):
     with engine.connect() as conn:
         return [dict(r._mapping) for r in conn.execute(text(sql), params)]
@@ -57,7 +42,6 @@ def get_popular(limit=20):
 
 
 def get_user_recs(user_id, limit=20):
-    """Gợi ý batch (ALS) cho user — join với metadata phim."""
     try:
         return query(
             """
@@ -76,7 +60,6 @@ def get_user_recs(user_id, limit=20):
 
 
 def get_user_history(user_id, limit=10):
-    """Vài phim user từng đánh giá cao (nếu có bảng ratings nhỏ)."""
     try:
         return query(
             """
@@ -91,7 +74,6 @@ def get_user_history(user_id, limit=10):
 
 
 def posters_for(movie_ids):
-    """movie_id -> poster_url cho danh sách phim (dùng cho gợi ý real-time từ HBase)."""
     ids = [int(m) for m in movie_ids if m is not None]
     if not ids:
         return {}
@@ -106,7 +88,6 @@ def posters_for(movie_ids):
 
 
 def get_realtime_recs(user_id, limit=20):
-    """Gợi ý real-time từ HBase (nếu có)."""
     try:
         import happybase
         conn = happybase.Connection(HBASE_HOST, port=HBASE_PORT, timeout=4000)
@@ -128,7 +109,6 @@ def get_realtime_recs(user_id, limit=20):
 
 
 def get_trending(limit=12):
-    """Phim 'thịnh hành real-time' — nguồn LIVE từ Wikimedia, đọc từ HBase."""
     try:
         import happybase
         conn = happybase.Connection(HBASE_HOST, port=HBASE_PORT, timeout=4000)
@@ -164,8 +144,6 @@ def search_movies(keyword, limit=20):
     except Exception:
         return []
 
-
-# --------------------------- Routes ------------------------------------------
 @app.route("/")
 def index():
     stats = get_stats()
@@ -186,7 +164,6 @@ def recommend():
         return render_template("recommend.html", user_id=None)
     batch_recs = get_user_recs(user_id)
     realtime_recs = get_realtime_recs(user_id)
-    # gắn poster cho gợi ý real-time (HBase chỉ có movie_id/title) bằng cách tra bảng movies
     pmap = posters_for([r.get("movie_id") for r in realtime_recs])
     for r in realtime_recs:
         r["poster_url"] = pmap.get(r.get("movie_id"))

@@ -1,4 +1,4 @@
-# 🎬 Hệ thống gợi ý phim thời gian thực trên nền tảng dữ liệu lớn
+#  Hệ thống gợi ý phim thời gian thực trên nền tảng dữ liệu lớn
 
 ### *Real-time Movie Recommendation System on Big Data Platform*
 

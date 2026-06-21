@@ -1,3 +1,18 @@
+"""
+trending_live.py — SPEED LAYER gọn nhẹ cho bản web deploy (Render/free).
+========================================================================
+Phiên bản "tất-cả-trong-một-tiến-trình" của tầng tốc độ: đọc thẳng luồng
+**Wikimedia EventStreams** (SSE live) trong một luồng nền, khớp tên phim và
+giữ danh sách "thịnh hành real-time" trong RAM — KHÔNG cần Kafka + HBase.
+
+Dùng cho bản web nhẹ (Flask + SQLite) khi deploy public: vẫn có mục
+"🔥 Thịnh hành real-time" sống thật từ Wikipedia, đúng điểm nhấn Big Data.
+
+Logic giữ y hệt stream/consumer.py + ingestion/wiki_stream_producer.py, chỉ
+gộp lại: SSE -> lọc -> khớp tên (từ bảng movies trong SQLite) -> cửa sổ trượt.
+
+Bật bằng biến môi trường ENABLE_LIVE_TRENDING=1 (xem render.yaml).
+"""
 import os
 import re
 import json
@@ -21,8 +36,10 @@ _events = deque()                 # (timestamp, movie_id, title)
 _lock = threading.Lock()
 _index = {}                       # canonical title -> (movie_id, full_title)
 _started = False
-_stats = {"seen": 0, "matched": 0, "started_at": None}
+_stats = {"seen": 0, "matched": 0, "started_at": None, "error": None}
 
+
+# --------------------------- Chuẩn hoá tên phim ----------------------------- #
 def _canon(title: str) -> str:
     """Bỏ năm, đảo ', The' -> 'The ', lowercase, bỏ dấu câu."""
     t = re.sub(r"\s*\(\d{4}\)\s*$", "", title).strip()
@@ -56,6 +73,8 @@ def _build_index(db_url):
     engine.dispose()
     return index
 
+
+# --------------------------- Đọc luồng SSE ---------------------------------- #
 def _iter_stream(url):
     req = urllib.request.Request(url, headers={"User-Agent": "movielens-recsys/1.0"})
     resp = urllib.request.urlopen(req, timeout=30)
@@ -82,11 +101,14 @@ def _record(movie_id, title):
 
 def _run(db_url):
     global _index
-    _index = _build_index(db_url)
+    # Đánh dấu thread đã chạy NGAY (để debug biết thread có khởi động không)
     _stats["started_at"] = int(time.time())
-    print(f"[trending_live] Nạp {len(_index):,} tên phim. Lắng nghe Wikimedia ({WIKI})...")
     while True:
         try:
+            if not _index:
+                _index = _build_index(db_url)
+                _stats["error"] = None
+                print(f"[trending_live] Nạp {len(_index):,} tên phim. Lắng nghe Wikimedia ({WIKI})...")
             for ev in _iter_stream(STREAM_URL):
                 _stats["seen"] += 1
                 if ev.get("wiki") != WIKI or ev.get("namespace") != 0:
@@ -97,8 +119,9 @@ def _run(db_url):
                 if hit:
                     _record(hit[0], hit[1])
         except Exception as e:
-            print(f"[trending_live] Mất kết nối ({e}); thử lại sau 3s...")
-            time.sleep(3)
+            _stats["error"] = repr(e)
+            print(f"[trending_live] Lỗi ({e!r}); thử lại sau 5s...")
+            time.sleep(5)
 
 
 # --------------------------- API cho app.py --------------------------------- #

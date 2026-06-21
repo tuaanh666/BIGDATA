@@ -23,6 +23,7 @@
 
 ![Kiến trúc Lambda của hệ thống gợi ý phim](docs/images/architecture_lambda.png)
 
+
 ## Batch Layer
 
 * Dữ liệu **MovieLens 25M** được lưu trên **HDFS**.
@@ -73,6 +74,32 @@
 | MAE (test 20%)         | **0.6187**                              |
 | Recommendation sinh ra | **400.000 dòng (20.000 user × Top-20)** |
 | Poster TMDB            | **11.866 ảnh**                          |
+
+
+## Hình ảnh demo
+
+**Gợi ý cá nhân hoá (ALS) cho người dùng:**
+
+![Gợi ý cá nhân hoá](docs/images/result_recommend.png)
+
+**Phim phổ biến (cold-start cho người dùng mới):**
+
+![Phim phổ biến](docs/images/result_popular.png)
+
+
+## Thống kê dữ liệu
+
+**Phân bố điểm đánh giá (MovieLens 25M):**
+
+![Phân bố điểm đánh giá](docs/images/rating_distribution.png)
+
+**Top thể loại theo số lượt đánh giá:**
+
+![Top thể loại](docs/images/top_genres.png)
+
+**Top phim phổ biến (theo weighted rating):**
+
+![Top phim phổ biến](docs/images/top_popular.png)
 
 
 #  Cấu trúc thư mục
@@ -288,10 +315,7 @@ Các siêu tham số sử dụng:
 * `Top-N = 20`
 * Chỉ giữ các phim có ít nhất **1000 lượt đánh giá**
 
-
 Mô hình được đánh giá bằng **RMSE** và **MAE** trên tập kiểm thử chiếm **20% dữ liệu**.
 
 
 > Bộ dữ liệu **MovieLens 25M** (~647MB) không được đưa vào repository do kích thước lớn. Tải bằng `ingestion/download_data.py` hoặc trực tiếp từ trang chính thức của GroupLens trước khi chạy huấn luyện mô hình.
-
-* web demo: https://movierec-demo-yy7l.onrender.com/

@@ -23,18 +23,6 @@
 
 ![Kiến trúc Lambda của hệ thống gợi ý phim](docs/images/architecture_lambda.png)
 
-```
-NGUỒN DỮ LIỆU              INGESTION        XỬ LÝ                       SERVING
-──────────────────────────────────────────────────────────────────────────────────
-MovieLens 25M (lịch sử) ─► HDFS ─────────► Spark ALS ─► MySQL (Batch View) ─┐
-                                          (train, Top-N)                     │
-                                                                             ├─► Flask Web ─► Người dùng
-Wikimedia (real-time THẬT) ─► Kafka ─► Consumer ─► HBase (Speed View) ───────┘   (+ poster TMDB)
-                                       (trending + thể loại)
-                                            ▲
-TMDB ─► MySQL.poster_url            Airflow lập lịch train lại
-```
-
 ## Batch Layer
 
 * Dữ liệu **MovieLens 25M** được lưu trên **HDFS**.

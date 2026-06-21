@@ -6,7 +6,7 @@ Phiên bản "tất-cả-trong-một-tiến-trình" của tầng tốc độ: đ
 giữ danh sách "thịnh hành real-time" trong RAM — KHÔNG cần Kafka + HBase.
 
 Dùng cho bản web nhẹ (Flask + SQLite) khi deploy public: vẫn có mục
-"🔥 Thịnh hành real-time" sống thật từ Wikipedia, đúng điểm nhấn Big Data.
+" Thịnh hành real-time" sống thật từ Wikipedia, đúng điểm nhấn Big Data.
 
 Logic giữ y hệt stream/consumer.py + ingestion/wiki_stream_producer.py, chỉ
 gộp lại: SSE -> lọc -> khớp tên (từ bảng movies trong SQLite) -> cửa sổ trượt.
@@ -39,7 +39,7 @@ _started = False
 _stats = {"seen": 0, "matched": 0, "started_at": None, "error": None}
 
 
-# --------------------------- Chuẩn hoá tên phim ----------------------------- #
+#  Chuẩn hoá tên phim #
 def _canon(title: str) -> str:
     """Bỏ năm, đảo ', The' -> 'The ', lowercase, bỏ dấu câu."""
     t = re.sub(r"\s*\(\d{4}\)\s*$", "", title).strip()
@@ -74,7 +74,7 @@ def _build_index(db_url):
     return index
 
 
-# --------------------------- Đọc luồng SSE ---------------------------------- #
+# Đọc luồng SSE  #
 _USER_AGENT = ("MovieRec/1.0 (https://github.com/tuaanh666/BIGDATA; "
                "movie-recsys demo) Python-urllib")
 
@@ -133,7 +133,7 @@ def _run(db_url):
             time.sleep(5)
 
 
-# --------------------------- API cho app.py --------------------------------- #
+#  API cho app.py  #
 def start(db_url):
     """Khởi động luồng nền (idempotent). Gọi 1 lần khi app khởi động."""
     global _started

@@ -2,8 +2,7 @@
 
 ### *Real-time Movie Recommendation System on Big Data Platform*
 
-Đây là hệ thống gợi ý phim được xây dựng trên nền tảng **Big Data** theo mô hình **Lambda Architecture**, kết hợp giữa **Batch Layer**, **Speed Layer** và **Serving Layer**. Mô hình học máy trung tâm là **ALS (Alternating Least Squares)** của **Spark MLlib**, được huấn luyện trên bộ dữ liệu **MovieLens 25M** với hơn **25 triệu lượt đánh g
-iá phim**.
+Đây là hệ thống gợi ý phim được xây dựng trên nền tảng **Big Data** theo mô hình **Lambda Architecture**, kết hợp giữa **Batch Layer**, **Speed Layer** và **Serving Layer**. Mô hình học máy trung tâm là **ALS (Alternating Least Squares)** của **Spark MLlib**, được huấn luyện trên bộ dữ liệu **MovieLens 25M** với hơn **25 triệu lượt đánh giá phim**.
 
 Điểm nổi bật của dự án là không chỉ tạo gợi ý từ dữ liệu lịch sử mà còn tích hợp **nguồn dữ liệu thời gian thực từ Wikimedia EventStreams** để hiển thị các phim đang được quan tâm trên Wikipedia, toàn bộ hệ thống được triển khai bằng Docker Compose với 13 container.
 
@@ -21,6 +20,8 @@ iá phim**.
 
 
 #  Kiến trúc hệ thống
+
+![Kiến trúc Lambda của hệ thống gợi ý phim](docs/images/architecture_lambda.png)
 
 ```
 NGUỒN DỮ LIỆU              INGESTION        XỬ LÝ                       SERVING

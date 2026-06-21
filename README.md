@@ -288,9 +288,10 @@ Các siêu tham số sử dụng:
 * `Top-N = 20`
 * Chỉ giữ các phim có ít nhất **1000 lượt đánh giá**
 
-* web demo: https://movierec-demo-yy7l.onrender.com/
 
 Mô hình được đánh giá bằng **RMSE** và **MAE** trên tập kiểm thử chiếm **20% dữ liệu**.
 
 
 > Bộ dữ liệu **MovieLens 25M** (~647MB) không được đưa vào repository do kích thước lớn. Tải bằng `ingestion/download_data.py` hoặc trực tiếp từ trang chính thức của GroupLens trước khi chạy huấn luyện mô hình.
+
+* web demo: https://movierec-demo-yy7l.onrender.com/

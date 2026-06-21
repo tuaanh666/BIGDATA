@@ -1,0 +1,23 @@
+# render.yaml — Deploy bản web nhẹ (Serving Layer) lên Render.com (free, 24/7 public)
+# ----------------------------------------------------------------------------------
+# Chỉ chạy Flask + SQLite (serving/recsys.db đã có sẵn 400k gợi ý ALS + phim phổ biến).
+# KHÔNG đụng tới bản Docker 13-container local (file này độc lập với docker-compose.yml).
+#
+# Cách dùng: Render Dashboard -> New -> Blueprint -> chọn repo này -> Apply.
+# Render tự đọc file này và dựng service.
+services:
+  - type: web
+    name: movierec-demo
+    runtime: python
+    plan: free
+    rootDir: serving                       # build & chạy trong thư mục serving/
+    buildCommand: pip install -r requirements.txt
+    # 1 worker: chỉ 1 kết nối SSE Wikimedia + 1 danh sách trending nhất quán trong RAM
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120
+    envVars:
+      - key: DB_URL
+        value: sqlite:///./recsys.db       # đọc SQLite kèm repo (không cần MySQL/HBase)
+      - key: ENABLE_LIVE_TRENDING
+        value: "1"                         # bật luồng nền đọc Wikimedia EventStreams (live)
+      - key: PYTHON_VERSION
+        value: "3.11.9"
